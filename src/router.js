@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
+class WrongBodyCredentials extends Error {
+  statusCode = 400;
+}
+
 const mockUser = {
   username: "authguy",
   password: "mypassword",
@@ -14,10 +18,10 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-    const {username, password} = req.body
-    if(username !== mockUser.username || password !== mockUser.password){
-        return "invalid credentials"
-    }
+  const { username, password } = req.body;
+  if (username !== mockUser.username || password !== mockUser.password) {
+    throw new WrongBodyCredentials("Invalid username or password");
+  }
   const token = jwt.sign({ username: "authguy" }, "mysecret");
   res.json(token);
 });
@@ -25,10 +29,10 @@ router.post("/login", (req, res) => {
 router.get("/profile", (req, res) => {
   try {
     const auth = req.get("Authorization");
-    jwt.verify(auth, "mysecret")
-    return res.json(mockUser.profile)
+    jwt.verify(auth, "mysecret");
+    return res.json(mockUser.profile);
   } catch (e) {
-    return "custom error"
+    return "custom error";
   }
 });
 
