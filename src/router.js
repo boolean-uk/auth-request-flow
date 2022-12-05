@@ -1,8 +1,9 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 const router = express.Router();
-
+const secret = process.env.JWT_SECRET
 class WrongBodyCredentials extends Error {
   statusCode = 400;
 }
@@ -22,15 +23,15 @@ router.post("/login", (req, res) => {
   if (username !== mockUser.username || password !== mockUser.password) {
     throw new WrongBodyCredentials("Invalid username or password");
   }
-  const token = jwt.sign({ username: "authguy" }, "mysecret");
+  const token = jwt.sign({ username: "authguy" }, secret);
   res.json(token);
 });
 
 router.get("/profile", (req, res) => {
   try {
     const auth = req.get("Authorization");
-    jwt.verify(auth, "mysecret");
-    return res.json(mockUser.profile);
+    jwt.verify(auth, secret);
+    return res.json({ profile: mockUser.profile });
   } catch (e) {
     return "custom error";
   }
