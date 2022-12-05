@@ -33,7 +33,7 @@ router.get("/profile", (req, res) => {
     jwt.verify(auth, secret);
     return res.json({ profile: mockUser.profile });
   } catch (e) {
-    return "custom error";
+    res.status(498).json({ message: "Invalid token" })
   }
 });
 
