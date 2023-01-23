@@ -28,8 +28,12 @@ router.post('/login', (req, res) => {
 router.get('/profile', (req, res) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, secret)
-    res.json(mockUser.profile)
+    try {
+        jwt.verify(token, secret)
+        res.json(mockUser.profile)
+    } catch (e) {
+        res.json({ error: e.message })
+    }
 });
 
 
