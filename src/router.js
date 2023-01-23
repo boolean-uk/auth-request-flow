@@ -18,7 +18,11 @@ const mockUser = {
 const secret = process.env.JWT_SECRET;
 
 router.post("/login", (req, res) => {
-  const token = jwt.sign({ username: mockUser.username }, secret);
+  const { username, password } = req.body;
+  if (username !== mockUser.username || password !== mockUser.password) {
+    res.status(401).json({ message: "username or password is invalid" });
+  }
+  const token = jwt.sign({ username }, secret);
   res.json({ token });
 });
 
