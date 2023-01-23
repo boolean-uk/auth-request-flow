@@ -16,11 +16,14 @@ const mockUser = {
 
 router.post('/login', (req, res) => {
     const token = jwt.sign(mockUser.username, secret)
-    res.json({ token })
+    res.json(token)
 });
 
 router.get('/profile', (req, res) => {
-
+    const authHeader = req.headers["authorization"];
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, secret)
+    res.json(mockUser.profile)
 });
 
 
