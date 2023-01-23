@@ -19,6 +19,16 @@ router.post("/login", (req, res) => {
 	res.json(jwt.sign(req.body, secret));
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+	const token = req.headers.authorization;
+
+	try {
+		const verify = jwt.verify(token, secret);
+		console.log(verify);
+		return verify;
+	} catch (e) {
+		res.json({ error: e.message });
+	}
+});
 
 module.exports = router;
