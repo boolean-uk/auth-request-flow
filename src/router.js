@@ -4,31 +4,30 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const mockUser = {
-	username: "authguy",
-	password: "mypassword",
-	profile: {
-		firstName: "Chris",
-		lastName: "Wolstenholme",
-		age: 43,
-	},
+  username: "authguy",
+  password: "mypassword",
+  profile: {
+    firstName: "Chris",
+    lastName: "Wolstenholme",
+    age: 43,
+  },
 };
 
 const secret = process.env.JWT_SECRET;
 
 router.post("/login", (req, res) => {
-	res.json(jwt.sign(req.body, secret));
+  res.json(jwt.sign(req.body, secret));
 });
 
 router.get("/profile", (req, res) => {
-	const token = req.headers.authorization;
+  let token = req.headers.authorization;
+  token = token.replace("Bearer: ", ""); // Change with something more meaninful
 
-	try {
-		const verify = jwt.verify(token, secret);
-		console.log(verify);
-		return verify;
-	} catch (e) {
-		res.json({ error: e.message });
-	}
+  try {
+    res.json({ verify: jwt.verify(token, secret) });
+  } catch (e) {
+    res.json({ error: e.message });
+  }
 });
 
 module.exports = router;
