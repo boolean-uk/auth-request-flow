@@ -15,8 +15,14 @@ const mockUser = {
 };
 
 router.post('/login', (req, res) => {
-    const token = jwt.sign(mockUser.username, secret)
-    res.json(token)
+    const { username, password } = req.body
+    if (username === mockUser.username && password === mockUser.password) {
+        const token = jwt.sign(mockUser.username, secret)
+        res.json({ token })
+    }
+    res.status(400).json({ error: "username or password field is incorrect" })
+
+
 });
 
 router.get('/profile', (req, res) => {
