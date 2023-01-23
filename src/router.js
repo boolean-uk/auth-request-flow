@@ -1,5 +1,7 @@
+const { json } = require("express");
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const { token } = require("morgan");
 
 const router = express.Router();
 
@@ -20,6 +22,15 @@ router.post("/login", (req, res) => {
   res.json({ token });
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+  try {
+    let bearer = req.headers.authorization;
+    bearer = bearer.replace("Bearer ", "");
+    jwt.verify(bearer, secret);
+    return res.json(mockUser.profile);
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+});
 
 module.exports = router;
