@@ -15,14 +15,19 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-  const token = jwt.sign({ username: req.body.username }, secret);
+  const username = req.body.username;
+  const password = req.body.password;
 
-  res.json({ token });
+  if (username === mockUser.username && password === mockUser.password) {
+    const token = jwt.sign({ username: req.body.username }, secret);
+    res.json({ token });
+  } else {
+    res.status(401).json({ error: "Username and password not found!" });
+  }
 });
 
 router.get("/profile", (req, res) => {
   const tokenToVerify = req.headers.authorization.split(" ")[1];
-  //   console.log(req.headers.authorization.split(" ")[1]);
   try {
     const decoded = jwt.verify(tokenToVerify, secret);
     res.json({ profile: mockUser.profile });
