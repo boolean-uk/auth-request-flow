@@ -15,24 +15,23 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
+  const { username, password } = req.body;
   const token = jwt.sign({ payload: mockUser.username }, secret);
-  res.status(201).json({ token });
+
+  if (username === mockUser.username && password === mockUser.password) {
+    res.status(201).json({ token });
+  } else {
+    res.status(404).json({ message: "username and password do not match" });
+  }
 });
 
-// 1. Get the token from the `authorization` header of the request.
-//     - Use console logs to inspect the `req` object to figure out how to find this.
-// 2. Use the `jsonwebtoken` library to verify that the token is valid.
-// 3. Respond with the mock user's profile if the token is valid, or a failure message if it isn't.
-
 router.get("/profile", (req, res) => {
-  //   const token = req.headers["authorization"];
-  // Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjoiYXV0aGd1eSIsImlhdCI6MTY4OTI1MDE0MX0._ujptOpYI3dFuC6dJKNvYthpb-DP14klsbLJCA8K0es
   const bearerToken = req.headers.authorization;
   const token = bearerToken.split(" ")[1];
 
   try {
-    const verifiedToken = jwt.verify(token, secret);
-    res.json({mockUser});
+    jwt.verify(token, secret);
+    res.json({ mockUser });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
