@@ -26,6 +26,18 @@ router.post("/login", (req, res) => {
   res.status(200).json({ success: myToken });
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+  const my_token = req.header("my_token")
+
+  try {
+    const decoded = jwt.verify(my_token, secret)
+    console.log(decoded)
+    return res.send(mockUser.profile)
+  } catch (error) {
+    console.log("invalid token")
+    return res.status(404).send("Wrong token")
+  }
+
+});
 
 module.exports = router;
