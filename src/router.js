@@ -16,19 +16,26 @@ const mockUser = {
 
 router.post('/login', (req, res) => {
 
-    const token = jwt.sign({payload: mockUser.username}, secret)
 
-    res.send({token})
+    const {username, password} = req.body
+
+    if (username === mockUser.username && password === mockUser.password) {
+        const token = jwt.sign({payload: mockUser.username}, secret)
+        res.send({token})
+
+    } else {
+        throw new Error("The username or password is not correct.")
+    }
+
 
 });
 
 router.get('/profile', (req, res) => {
-    const token = req.header("Authorization")
-    console.log(token)
-
+    const token = req.header('authorization')
+    console.log('This is all the headers', req.headers)
 
     try {
-        const auth = jwt.verify(token, secret)
+        const auth = jwt.verify(token.slice(7), secret)
         console.log(auth)
         res.send({profile: mockUser.profile})
     } catch (e) {
