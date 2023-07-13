@@ -13,8 +13,12 @@ const mockUser = {
     }
 };
 
-router.post('/login', (req, res) => {
+const secret = process.env.JWT_SECRET
 
+router.post('/login', (req, res) => {
+    const payload = { username: mockUser.username }
+    const token = jwt.sign(payload, secret)
+    res.json({ token })
 });
 
 router.get('/profile', (req, res) => {
