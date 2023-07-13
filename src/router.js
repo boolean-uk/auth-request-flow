@@ -22,7 +22,16 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/profile', (req, res) => {
-  
+    // console.log(req.headers)
+    // user token is at req.headers.authorization
+    // split split req.headers.authorization in to "bearer" and "token" and extract just the token
+    const payload = req.headers.authorization.split(' ')[1]
+    try {
+        jwt.verify(payload, secret)
+        res.json({ mockUser })
+    } catch (e) {
+        res.status(500).json({ error: e.message })
+    }
 });
 
 
