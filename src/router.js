@@ -15,8 +15,16 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-  const token = jwt.sign(mockUser, secret);
-  return res.send({ token });
+  const { username, password } = req.body;
+
+  if (username === mockUser.username && password === mockUser.password) {
+    const token = jwt.sign(mockUser, secret);
+    return res.status(201).send({ token });
+  }
+
+  return res.status(401).send({
+    error: "Your username or password is incorrect. Please try again.",
+  });
 });
 
 router.get("/profile", (req, res) => {
