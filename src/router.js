@@ -16,13 +16,30 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-  const payload = { username: mockUser.username };
-  //   const payload = req.headers.payload;
+  //   const payload = { username: mockUser.username };
+  const payload = { username: req.body.username };
 
-  const token = jwt.sign(payload, secret);
-  return res.status(201).json({ token: token });
+  try {
+    const token = jwt.sign(payload, secret);
+    return res.status(201).json({ token: token });
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+  const tokenHeader = req.headers.authorization;
+  console.log(tokenHeader);
+
+  const token = tokenHeader.split(" ")[1];
+  console.log(token);
+
+  jwt.verify(token, secret, (error, decoded) => {
+    if (error) {
+      return res.status(401).json({ error: "Unauthorized - Invalid token" });
+    }
+    return res.json({ profile: mockUser.profile });
+  });
+});
 
 module.exports = router;
