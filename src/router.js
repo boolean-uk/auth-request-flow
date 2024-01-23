@@ -16,16 +16,16 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-  const {username, password} = req.body
+  const { username, password } = req.body;
 
   if (username !== mockUser.username) {
-    res.status(401).json({error: "username / password do not match"})
-    return
+    res.status(401).json({ error: "username / password do not match" });
+    return;
   }
 
   if (password !== mockUser.password) {
-    res.status(401).json({error: "username / password do not match"})
-    return
+    res.status(401).json({ error: "username / password do not match" });
+    return;
   }
 
   const payload = { username: mockUser.username };
@@ -35,11 +35,12 @@ router.post("/login", (req, res) => {
 
 router.get("/profile", (req, res) => {
   const [prefix, token] = req.headers.authorization.split(" ");
-  const verified = jwt.verify(token, secret);
-  if (verified) {
+  try {
+    jwt.verify(token, secret);
     res.json(mockUser);
+  } catch (error) {
+    res.status(401).json({error: "your token is 💩"});
   }
-  res.status(500);
 });
 
 module.exports = router;
