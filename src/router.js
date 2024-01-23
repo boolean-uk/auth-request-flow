@@ -24,11 +24,17 @@ function createToken() {
 }
 
 router.post("/login", (req, res) => {
-  const token = createToken();
-  if (token) {
-    res.json({ token });
+  const { username, password } = req.body;
+
+  if (username === mockUser.username && password === mockUser.password) {
+    const token = createToken();
+    if (token) {
+      res.json({ token });
+    } else {
+      res.status(500).json({ message: "Error creating token" });
+    }
   } else {
-    res.status(500).json({ message: "Error creating token" });
+    res.status(401).json({ message: "Invalid credentials" });
   }
 });
 
