@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET;
+console.log(secret)
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ const mockUser = {
 
 router.post("/login", (req, res) => {
     console.log(secret);
-    const payload = req.body;
+    const payload = req.body.username;
     const username = req.body.username;
     const password = req.body.password;
 
