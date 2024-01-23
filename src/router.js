@@ -29,7 +29,8 @@ router.post("/login", (req, res) => {
   if (username === mockUser.username && password === mockUser.password) {
     const token = createToken();
     if (token) {
-      res.json({ token });
+      console.log(token);
+      res.status(201).json({ token, message: "Welcome" });
     } else {
       res.status(500).json({ message: "Error creating token" });
     }
@@ -40,7 +41,7 @@ router.post("/login", (req, res) => {
 
 router.get("/profile", (req, res) => {
   try {
-    const tokenFromAuth = req.header("Authorization");
+    const tokenFromAuth = req.headers.authorization;
     if (!tokenFromAuth) {
       return res.status(401).json({ message: "No token provided" });
     }
