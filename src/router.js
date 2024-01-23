@@ -20,8 +20,15 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/profile', (req, res) => {
-  
-});
+    const requestToken = req.headers.authorization.slice(7)
 
+    try {
+        const verifyToken = jwt.verify(requestToken, secret)
+        res.status(200).json({ profile: verifyToken.profile })
+    }
+    catch (err) {
+        res.status(401).json({ error: "Could not verify user"})
+    }
+});
 
 module.exports = router;
