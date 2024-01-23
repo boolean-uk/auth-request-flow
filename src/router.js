@@ -23,8 +23,19 @@ router.post('/login', (req, res) => {
 
 router.get('/profile', (req, res) => {
 
+    const token = req.headers.authorization.split(' ')
+    // console.log(token)
 
-    
+    try {
+
+        const authorization = jwt.verify(token[1], secret)
+        res.status(200).json({ authorization })
+    }
+    catch{
+
+        res.status(401).json({'Error ': 'invalid token'})
+    }
+
 
 });
 
