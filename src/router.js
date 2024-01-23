@@ -19,6 +19,16 @@ router.post("/login", (req, res) => {
   return res.send({ token });
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+
+  try {
+    const verifiedToken = jwt.verify(token, secret);
+
+    return res.status(200).send({ profile: verifiedToken.profile });
+  } catch (e) {
+    return res.status(e.status ?? 500).send({ error: e.message });
+  }
+});
 
 module.exports = router;
