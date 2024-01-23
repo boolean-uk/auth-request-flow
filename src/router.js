@@ -15,8 +15,13 @@ const mockUser = {
 };
 
 router.post('/login', (req, res) => {
-    const token = jwt.sign(mockUser, secret)
-    res.status(201).json({ token })
+    const { username, password } = req.body
+
+    if (username === mockUser.username && password === mockUser.password) {
+        const token = jwt.sign(mockUser, secret)
+        return res.status(201).json({ token })
+    }
+    return res.status(401).json({ error: "incorrect login credentials provided"})
 });
 
 router.get('/profile', (req, res) => {
