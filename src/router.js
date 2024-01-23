@@ -19,6 +19,14 @@ router.post("/login", (req, res) => {
   res.json({ token });
 });
 
-router.get("/profile", (req, res) => {});
-
+router.get("/profile", (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) {
+      res.status(401).json({ error: "Unauthorized" });
+    } else {
+      res.json(decoded);
+    }
+  });
+});
 module.exports = router;
