@@ -4,23 +4,62 @@ const secret = process.env.JWT_SECRET
 
 const router = express.Router()
 
-const mockUser = {
-  username: 'authguy',
-  password: 'mypassword',
-  profile: {
-    firstName: 'Chris',
-    lastName: 'Wolstenholme',
-    age: 43
+// Storage
+const users = [
+  {
+    username: 'authguy',
+    password: 'mypassword',
+    profile: {
+      firstName: 'Chris',
+      lastName: 'Wolstenholme',
+      age: 43
+    }
+  },
+  {
+    username: 'Nazar',
+    password: '123123123',
+    profile: {
+      firstName: 'Nazar',
+      lastName: 'Tymiv',
+      age: 18
+    }
   }
+]
+
+// Global functions
+const getUserByUserName = (username) => {
+  const foundUser = users.find((user) => user.username === username)
+
+  if (!foundUser) {
+    const error = new Error('User with provided username not found')
+    error.status = 404
+    throw error
+  }
+
+  return foundUser
 }
 
-router.post('/login', (req, res) => {
-  const { username } = req.body
+const checkPassword = (user, password) => {
+  const checkedPassword = String(user.password) === String(password)
 
-  const payload = { username: username }
+  if (!checkedPassword) {
+    const error = new Error(`Password for ${user.username} is wrong`)
+    error.status = 401
+    throw error
+  }
+
+  return true
+}
+
+// Routers
+router.post('/login', (req, res) => {
+  const { username, password } = req.body
 
   try {
-    const jwtToken = jwt.sign(payload, secret)
+    const foundUser = getUserByUserName(username)
+    checkPassword(foundUser, password)
+
+    const jwtToken = jwt.sign(foundUser.profile, secret)
 
     res.status(201).json({ jwtToken })
   } catch (error) {
