@@ -1,18 +1,36 @@
 const express = require('express');
-const app = express();
+const jwt = require('jsonwebtoken');
+const jwtSecret = "Loza's_super_secure_secret"; 
 
-const cors = require('cors');
-const morgan = require('morgan');
+const router = express.Router();
 
-app.disable('x-powered-by');
+const mockUser = {
+    username: 'authguy',
+    password: 'mypassword',
+    profile: {
+        firstName: 'Chris',
+        lastName: 'Wolstenholme',
+        age: 43
+    }
+};
 
-app.use(morgan('dev'))
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    if (mockUser.username === username && mockUser.password === password) {
+        const token = jwt.sign({ mockUser }, jwtSecret); 
+        return res.status(201).json({ token });
+    }
+    return res.status(401).json({ err: 'The credentials provided are incorrect' });
+});
 
-const router = require('./router');
+router.get('/profile', (req, res) => {
+    const requestToken = req.headers.authorization.slice(7);
+    try {
+        const verifyToken = jwt.verify(requestToken, jwtSecret); 
+        res.status(200).json({ profile: verifyToken.mockUser.profile });
+    } catch (err) {
+        res.status(401).json({ err: 'User cannot be verified' });
+    }
+});
 
-app.use('/', router);
-
-module.exports = app
+module.exports = router;
