@@ -15,10 +15,23 @@ const mockUser = {
 };
 
 router.post("/login", (req, res) => {
-  const token = jwt.sign(mockUser, secret);
-  res.status(201).json({ token: token });
+  const { username, password } = req.body;
+  if (username === mockUser.username && password === mockUser.password) {
+    const token = jwt.sign(mockUser, secret);
+    return res.status(201).json({ token });
+  }
+  return res.status(401).json({ error: "incorrect credentials" });
 });
 
-router.get("/profile", (req, res) => {});
+router.get("/profile", (req, res) => {
+  const requestToken = req.headers.authorization.split(' ')[1];
+
+  try {
+    const verifyToken = jwt.verify(requestToken, secret);
+    res.status(200).json({ profile: verifyToken.profile });
+  } catch (err) {
+    res.status(401).json({ error: "no user" });
+  }
+});
 
 module.exports = router;
