@@ -14,11 +14,6 @@ const mockUser = {
     }
 };
 
-const header = {
-  "alg": "HS256",
-  "typ": "JWT"
-}
-
 router.post('/login', (req, res) => {
 	const { username, password } = req.body
 		console.log(username === mockUser.username && password === mockUser.password)
