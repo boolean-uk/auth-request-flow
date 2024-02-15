@@ -20,9 +20,14 @@ const header = {
 }
 
 router.post('/login', (req, res) => {
-	const user = req.body
-	const token = jwt.sign(user, secret)
-	res.json({ token })
+	const { username, password } = req.body
+		console.log(username === mockUser.username && password === mockUser.password)
+	if (username === mockUser.username && password === mockUser.password) {
+		const token = jwt.sign(username, secret)
+		res.json({ token })
+	} else {
+		res.status(401).json({ error: "invalid login credentials"})
+	}
 });
 
 router.get('/profile', (req, res) => {
