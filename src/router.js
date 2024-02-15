@@ -30,8 +30,8 @@ router.get('/profile', (req, res) => {
 	const [_, token] = auth.split(" ")
 
 	try {
-		const validToken = jwt.verify(token, secret)
-		res.json({ status: "success" })
+		jwt.verify(token, secret)
+		res.json({ profile: mockUser.profile })
 	} catch (error) {
 		res.status(401).json({ error: error.message })
 	}
