@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const secret = process.env.JWT_SECRET;
 
 const router = express.Router();
 
@@ -13,13 +14,27 @@ const mockUser = {
     }
 };
 
-router.post('/login', (req, res) => {
+const header = {
+  "alg": "HS256",
+  "typ": "JWT"
+}
 
+router.post('/login', (req, res) => {
+	const user = req.body
+	const token = jwt.sign(user, secret)
+	res.json({ token })
 });
 
 router.get('/profile', (req, res) => {
-  
-});
+	const auth = req.header("authentication")
+	const [_, token] = auth.split(" ")
 
+	try {
+		const validToken = jwt.verify(token, secret)
+		res.json({ status: "success" })
+	} catch (error) {
+		res.status(401).json({ error: error.message })
+	}
+});
 
 module.exports = router;
