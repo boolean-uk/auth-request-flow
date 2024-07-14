@@ -13,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const router = require('./router');
 
+console.log('test1')
 app.use('/', router);
 
 module.exports = app
