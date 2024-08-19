@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
+const secret = process.env.JWT_SECRET;
+
 const mockUser = {
     username: 'authguy',
     password: 'mypassword',
@@ -14,6 +16,9 @@ const mockUser = {
 };
 
 router.post('/login', (req, res) => {
+       const token = jwt.sign({ username: mockUser.username }, secret);
+
+       res.json({ token: token });
 
 });
 
