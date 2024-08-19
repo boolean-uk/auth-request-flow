@@ -16,9 +16,18 @@ const mockUser = {
 };
 
 router.post('/login', (req, res) => {
-       const token = jwt.sign({ username: mockUser.username }, secret);
+    const { username, password } = req.body;
 
-       res.json({ token: token });
+    if(username === mockUser.username && password === mockUser.password) {
+    
+    const token = jwt.sign({ username: mockUser.username }, secret);
+
+    res.json({ token: token });
+    } else {
+        return res.status(400).json({
+          error: "Username or password does not match.",
+        });
+    }
 
 });
 
